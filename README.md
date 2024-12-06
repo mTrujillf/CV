@@ -13,11 +13,6 @@ This project demonstrates a multiplayer game where multiple users can participat
   - Real-time interaction between multiple users.  
   - Persistent storage of user data.  
   - Networking with sockets and multicast.  
-- **How to Run:**  
-  1. Navigate to the `Java/` directory.  
-  2. Compile and run the main class using your preferred Java IDE or CLI tools.  
-
----
 
 ### **2. MATLAB: Solar System Trajectory Simulator**  
 This folder contains a project that uses **interpolation techniques** to simulate the trajectories of planets in the solar system.  
@@ -25,11 +20,6 @@ This folder contains a project that uses **interpolation techniques** to simulat
 - **Features:**  
   - Visualization of planetary motion in a simulated solar system.  
   - Accurate trajectory generation using interpolation algorithms.  
-- **How to Use:**  
-  1. Open the `Matlab/` directory.  
-  2. Run the main script in MATLAB to generate and visualize the simulation.  
-
----
 
 ### **3. Python: Drone Navigation and Competition Codes**  
 This folder focuses on drone navigation and includes:  
@@ -41,10 +31,3 @@ This folder focuses on drone navigation and includes:
   - Autonomous drone navigation examples.  
   - Competition-tested drone control scripts.  
   - Integration with OptiTrack for enhanced precision.  
-
-- **How to Use:**  
-  1. Navigate to the `Python/` directory.  
-  2. Explore the subfolders for competition and OptiTrack-specific scripts.  
-  3. Run the examples using Python 3.x and the required dependencies (check `requirements.txt` if provided).  
-
----
