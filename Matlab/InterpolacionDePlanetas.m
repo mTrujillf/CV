@@ -1,18 +1,5 @@
-% =========================================================================
-%                      Tierra - Luna - Satélites
-% =========================================================================
-%
-CU     = '000175020';
-NOMBRE = 'Vega Medina Aranza Estefania';
-CU2="000171841";
-NOMBRE2 = 'Trujillo Flores Miguel Ángel';
-disp('========================================================');
-disp('            COM-14105 ANC Proyecto Final');
+
 disp('                   Modelo de Planetas');
-S = sprintf('%s, %s',CU,NOMBRE);
-disp(S);
-S2 = sprintf('%s, %s',CU2,NOMBRE2);
-disp(S2);
 disp('========================================================');
 % =========================================================================
 %Radios 
@@ -27,14 +14,7 @@ rM = 3389500;%radio de Marte
 clf
 G = 6.67408E-11; %%  m3 kg-1 s-2 - Gravedad
 
-%
-% Masas en Kg (Tierra, Luna y SatGeoEst)
-%
-% Metemos la inclinación de la luna de la siguiente manera:
 
-% Se encuentra a 3.832e+08 del centro de la Tierra y
-% a una inclinación dada por el eje de la Luna  de 88.3.
-%
 ang_incl_Luna = ( 88.3 ) * pi / 180.0;
 %
 rLuna=3.832e+08;
@@ -43,33 +23,21 @@ xLuna = rLuna * cos(ang_incl_Luna);
 yLuna = 0;
 zLuna = rLuna * sin(ang_incl_Luna);
 
-% Fobos tiene un angulo de 26.03 sobre el eje eclíptica de Marte.
-%
 ang_incl_Fobos = ( 26.03 ) * pi / 180.0;
 %
 xFobos = rF * cos(ang_incl_Fobos);
 yFobos = 0;
 zFobos = rF * sin(ang_incl_Fobos);
 
-
-% Por lo tanto su posición inicial no está sobre el plano  Z = 0
-% sino in poco arriba en Z
-%
-% Se definen las másas de los móviles y se elabora una matriz M con 
-% el valor de cada masa por columas para facilitar el cálculo de las
-% aceleraciones.
-%
 m         = [1.989E+30 , 5.9736E+24, 7.349E+22, 6.4185E+23, 4.867E+24, 3.285E+23,1.072e+16,2e+15]; %masas del sol, de la tierra, masa de la luna, masa marte, venus, MERCURIO
 ndm       = size(m);
 n_moviles = ndm(2);
 M         = zeros(3,n_moviles);
 for i = 1:n_moviles
     M(:,i) = m(i) * ones(3,1); 
-    %se genero una matriz de las masas 
+    
 end
-%
-% velocidades tangenciales 
-%
+
 wls1 = sqrt(G*m(1)/rls1^3);
 vTgls1=wls1*rls1; %Tierra
 
@@ -99,17 +67,10 @@ r0=[[0;0;0], ...%sol
     [rls4;0;0],...%venus
     [rls5;0;0],...%Mercurio
     [xFobos + rls3;yFobos;zFobos],...%Utilizando el calculo de las inclinaciones se coloco  en su posicion inical Fobos                               
-    [rD + 2 * rM + rls3;0;0]]; %Deinos inicia lo más alejado del sol posible, por
-                               %lo que se suma la distatancia del centro
-                               %del simulador a marte, luego se suma dos
-                               %veces el radio de marte y finalmente sesuma
-                               %la distancia de Deinos a Marte
+    [rD + 2 * rM + rls3;0;0]]; 
     %[3.832557907001450e+08+rls2;0;0], ...
     %[(3.832557907001450e+08);0;rls3]];
-%
-% Velocidades iniciales de la Tierra, Luna y Apolo (mts / seg)
-% similares en dimensiones a las posiciones.
-%
+
 v0=[[0;0;0],...
     [0;vTgls1;0],... %...Tierra
     [0;vTgls1+vTgls2;0],...%Luna
@@ -123,40 +84,23 @@ v0=[[0;0;0],...
     %[0;0;vTgls3]];
 %
 deltaT=1*60;  %% cada minuto (en segs)
-%
-% cantidad de iteraciones en el tiempo
-% (un ciclo de la Tierra)
-% 
+
 Nk = 365*24*60*60/deltaT; %en hrs
 
-% Se define la matriz para guardar las posiciones de los móviles
-% son Nk+1 instantes del tiempo y quedan como renglones,
-% [x,y,z] por cada móvil, 3*n columnas por cada renglón 
-%
 pos = zeros(Nk+1,3*n_moviles);
 for i=1:n_moviles
     pos(1,3*(i-1)+1:3*i)=r0(:,i)';
 end
-%
-%  Para crear el espacio para el vector unitario en la dirección de la
-%  fuerza, la fuerza y la aceleración (vectoriales).
-%
+
 u      = r0;
 Fza    = zeros(n_moviles,n_moviles,3); % hacia atrás se guardan [Fx,Fy,Fz]
 a      = Fza;
 dr     = r0;
 FzaTot = zeros(3,n_moviles);
-%
-% Variables para iterar
-%
+
 r = r0;
 v = v0;
-%
-% Iterando sobre el tiempo
-%
 
-%Se generan las matrices donde se van a almacenar las velocidades y
-%aceleraciones en todos los momentos.
 aceleracionX = zeros(Nk,n_moviles);
 velocidadX = zeros(Nk,n_moviles);
 aceleracionY = zeros(Nk,n_moviles);
@@ -166,75 +110,43 @@ velocidadZ = zeros(Nk,n_moviles);
 aceleracionRes = zeros(Nk,n_moviles);
 velocidadRes = zeros(Nk,n_moviles);
 for t=1:Nk
-  %
-  % Se obtienen las fuerzas entre los móviles,
-  % iterando sobre los índices de los móviles, el índice externo (i)
-  % se combina con los índices internos (j) de i+1 a n.
-  % En cada caso se calcula la fuerza que atrae al móvil i hacia el móvil
-  % j. Este vector se almacena en Fza(i,j,:).
-  % posteriormente se define Fza(j,i,:) = -Fza(i,j,:)
-  %
+
   for i =1:n_moviles-1     % i es el rengon de la matriz de fuerzas
      for j = i+1:n_moviles % j es la columna
-     %    
-     % vector de diferencias de posiciones va del movil i al movil j
-     %
+   
         dr = r(:,j) - r(:,i);
-     %
-     % distancia al cuadrado
-     %
+    
         dr2 = dr' * dr;
-     %
-     % Vector unitario del movil i al movil j
-     %
+    
         u = dr / sqrt(dr2);
-     %
-     % Fuerza de gravedad
-     %
+    
         F = G * m(i)*m(j)/dr2 * u;
         Fza(i,j,:) =  F';
         Fza(j,i,:) = -F';
      end
   end
-  %
-  % Fuerza total sobre cada móvil.
-  % Cada móvil queda en un renglón de los planos.
-  % Por ello sumamos las entradas de la matriz Fza
-  % por renglones, x en el primer plano, y en el segundo, z en el tercero
-  % Cada movil quedará en una columna de FzaTot con reglones para [Fx,Fy,Fz]'.
-  %
+
   for i = 1:n_moviles
     FzaTot(:,i) = sum(Fza(i,:,:));
   end
-  %
-  % Aceleraciones (una columna para cada móvil)
-  %
+
     a = FzaTot ./ M;
     %Se guardan las aceleraciones
     aceleracionX(t,:)=a(1,:);
     aceleracionY(t,:)=a(2,:);
     aceleracionZ(t,:)=a(3,:);
-  %
-  % Velocidad
-  %
+
     v = v + a * deltaT;
     velocidadX(t,:)=v(1,:);
     velocidadY(t,:)=v(2,:);
     velocidadZ(t,:)=v(3,:);
-    %
-    % Posición
-    %
+
     r = r + v * deltaT;
-    %
-    % Guardo la posición
-    %
+
     for i = 1:n_moviles
         pos(t+1,3*(i-1)+1:3*i) = r(:,i)';
     end                
 end
-%
-% Control de la caja 3D de dibujo
-%
 
 for i=1:Nk
     for j=1:n_moviles
@@ -243,8 +155,6 @@ for i=1:Nk
     end
 end
 
-
-%Se realiza un traslacion de plano para poder centrar el movil deseado. 
 pos2 = zeros(Nk+1,3*n_moviles);
 nuevoMovilCentral = 2;
 for i=1:Nk+1 
@@ -255,7 +165,6 @@ for i=1:Nk+1
     end
 end
 
-%Velocidad  promedio de los planetas
 prom = zeros(1,n_moviles);
 for i = 1:Nk
     for j=1:n_moviles
